@@ -195,7 +195,6 @@ for (a in 1:length(data_by_subject)){
     #data_by_activity_by_subject <- group_by(data_by_activity[[a]],Subject)
     data_by_subject_by_activity <- group_by(data_by_subject[[a]],Activity)
     
-    
     #new_data <- rbind(new_data,summarise_each(data_by_activity_by_subject, funs(mean)))
     new_data <- rbind(new_data,summarise_each(data_by_subject_by_activity, funs(mean)))
 }
