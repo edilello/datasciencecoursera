@@ -46,12 +46,6 @@ if (!file.exists("data/UCI\ HAR\ Dataset")){
 # Step1: Merge the training and the test sets to create one data set.
 ########################################################################
 
-# Source foulders: train/valid
-# source files: 
-# X_train.txt/X_test.txt 
-# y_train.txt/y_test.txt
-# subject_train.txt/subject_test.txt
-
 
 # Load activity labels data : 7352/2947  rows for 1 column
 activity_data_train <- read.table("./data/UCI\ HAR\ Dataset/train/y_train.txt", header = FALSE, col.names = "Activity")
@@ -108,14 +102,11 @@ data <- data[,c(1,2,feature_indices)]
 
 activity_names <- read.table("data/UCI\ HAR\ Dataset/activity_labels.txt",header = FALSE)
 
-# transform this activity names into a factor
-activity_names_fac <- as.factor(activity_names$V2)
-
 # this is the original activity column data. Make it a factor
 activity_label_fac <- as.factor(data$Activity)
 
 # remap the levels of one factor into the other
-new_activity_data <- plyr::mapvalues(activity_label_fac, levels(activity_label_fac), levels(activity_names_fac))
+new_activity_data <- plyr::mapvalues(activity_label_fac, levels(activity_label_fac), c("WALKING","WALKING_UPSTAIRS","WALKING_DOWNSTAIRS","SITTING","STANDING","LAYING"))
 
 # put the new relabeled factor column in the original dataset
 # (This could be made with a lot less code, but I am making each passage explicit for readability)
@@ -193,17 +184,23 @@ for (i in 1:length(feature_names)){
 new_data <- NULL
 
 # split data by activity
-data_by_activity <- split(data, data$Activity)
+#data_by_activity <- split(data, data$Activity)
 
-# Use summarize_each to compute mean of each column after grouping by subject
-for (a in 1:length(data_by_activity)){
-    data_by_activity_by_subject <- group_by(data_by_activity[[a]],Subject)
+# split data by Subject
+data_by_subject <- split(data, data$Subject)
+
+# Use summarize_each to compute mean of each column after grouping by Activity
+for (a in 1:length(data_by_subject)){
     
-    new_data <- rbind(new_data,summarise_each(data_by_activity_by_subject, funs(mean)))
+    #data_by_activity_by_subject <- group_by(data_by_activity[[a]],Subject)
+    data_by_subject_by_activity <- group_by(data_by_subject[[a]],Activity)
     
+    
+    #new_data <- rbind(new_data,summarise_each(data_by_activity_by_subject, funs(mean)))
+    new_data <- rbind(new_data,summarise_each(data_by_subject_by_activity, funs(mean)))
 }
 
-# I like the Activty to be the first column
+# I like the Subject to be the first column
 new_data<-new_data[,c(2,1,3:68)]
 
 # save the new data frame

@@ -1,4 +1,4 @@
-### This file describes hot the script run_analysis.R works.
+### This file describes how the script run_analysis.R works.
 
  First, if not present, a folder name "data" is created under the current working directory.
  This is to separate the data from the script. Then, the dataset available at  https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip  
